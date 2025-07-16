@@ -3,6 +3,8 @@ package com.bekx.studenttestservice.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Sorunun içeriği boş bırakılamaz!")
     private String content;
 
     @ManyToOne
@@ -24,7 +26,16 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @Valid
     private List<Answer> answers;
+
+    // tek doğru cevap
+    @AssertTrue(message = "Her soruda yalnızca bir doğru cevap olmalıdır!")
+    public boolean hasOnlyOneCorrectAnswer() {
+        if (answers == null) return false;
+        long correctCount = answers.stream().filter(Answer::isCorrect).count();
+        return correctCount == 1;
+    }
 
     // getter&setter
     public Long getId() {return id;}

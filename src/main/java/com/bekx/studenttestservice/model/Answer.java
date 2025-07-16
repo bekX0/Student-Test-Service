@@ -11,7 +11,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Cevap içeriği boş bırakılamaz!")
     private String content;
 
     private boolean isCorrect;

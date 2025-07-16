@@ -2,6 +2,7 @@ package com.bekx.studenttestservice.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
@@ -13,12 +14,13 @@ public class Test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Test için bir isim girmelisin!")
     @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference
+    @Valid
     private List<Question> questions;
 
     //getter&stter
