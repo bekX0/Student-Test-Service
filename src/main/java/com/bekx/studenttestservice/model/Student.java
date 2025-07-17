@@ -1,7 +1,9 @@
 package com.bekx.studenttestservice.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -23,6 +25,10 @@ public class Student {
     @Column(nullable = false)
     private String number;
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonManagedReference("student-participations")
+    private List<TestParticipation> participations;
+
     //getter &setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -32,4 +38,6 @@ public class Student {
     public void setLastName(String lastName) { this.lastName = lastName; }
     public String getNumber() { return number; }
     public void setNumber(String number) { this.number = number; }
+    public List<TestParticipation> getParticipations() { return participations; }
+    public void setParticipations(List<TestParticipation> participations) {this.participations = participations;}
 }

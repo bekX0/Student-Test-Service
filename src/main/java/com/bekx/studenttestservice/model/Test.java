@@ -18,10 +18,18 @@ public class Test {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TestType type;
+
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference
     @Valid
     private List<Question> questions;
+
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    @JsonManagedReference("test-participations")
+    private List<TestParticipation> participations;
 
     //getter&stter
     public Long getId() {return id;}
@@ -30,4 +38,8 @@ public class Test {
     public void setName(String name) {this.name = name;}
     public List<Question> getQuestions() {return questions;}
     public void setQuestions(List<Question> questions) {this.questions = questions;}
+    public List<TestParticipation> getParticipations() {return participations;}
+    public void setParticipations(List<TestParticipation> participations) {this.participations = participations;}
+    public TestType getType() {return type;}
+    public void setType(TestType type) {this.type = type;}
 }
