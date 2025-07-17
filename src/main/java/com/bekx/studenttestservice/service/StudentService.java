@@ -20,4 +20,9 @@ public class StudentService {
     public List<Student> getAll() {
         return repository.findAll();
     }
+
+    public Student getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Öğrenci Bulunamadı!"));
+    }
 }
