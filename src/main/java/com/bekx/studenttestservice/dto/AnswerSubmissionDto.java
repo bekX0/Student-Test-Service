@@ -6,6 +6,13 @@ public class AnswerSubmissionDto {
     private Long answerId;
     private Long participationId;
 
+    public AnswerSubmissionDto(Long studentId, Long questionId, Long answerId, Long participationId) {
+        this.studentId = studentId;
+        this.questionId = questionId;
+        this.answerId = answerId;
+        this.participationId = participationId;
+    }
+
     // getter&setter
     public Long getStudentId() { return studentId; }
     public void setStudentId(Long studentId) { this.studentId = studentId; }
