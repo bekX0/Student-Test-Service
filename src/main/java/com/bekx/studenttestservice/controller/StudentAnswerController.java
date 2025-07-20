@@ -19,63 +19,24 @@ import java.util.Optional;
 public class StudentAnswerController {
 
     private final StudentAnswerService service;
-    private final TestParticipationRepository participationRepo;
-    private final StudentRepository studentRepo;
-    private final QuestionRepository questionRepo;
-    private final AnswerRepository answerRepo;
 
-    public StudentAnswerController(
-            StudentAnswerService service,
-            TestParticipationRepository participationRepo,
-            StudentRepository studentRepo,
-            QuestionRepository questionRepo,
-            AnswerRepository answerRepo
-    ) {
+    public StudentAnswerController(StudentAnswerService service) {
         this.service = service;
-        this.participationRepo = participationRepo;
-        this.studentRepo = studentRepo;
-        this.questionRepo = questionRepo;
-        this.answerRepo = answerRepo;
     }
-
 
     @PostMapping
     public ResponseEntity<?> submitAnswer(@RequestBody AnswerSubmissionDto request) {
-        Optional<Student> student = studentRepo.findById(request.getStudentId());
-        Optional<Question> question = questionRepo.findById(request.getQuestionId());
-        Optional<Answer> answer = answerRepo.findById(request.getAnswerId());
-        Optional<TestParticipation> participation = participationRepo.findById(request.getParticipationId());
-
-        if (student.isEmpty() || question.isEmpty() || answer.isEmpty() || participation.isEmpty()) {
-            return ResponseEntity.badRequest().body("Geçersiz veri. Tüm ID’ler geçerli olmalıdır.");
-        }
-
-        StudentAnswer studentAnswer = new StudentAnswer();
-        studentAnswer.setStudent(student.get());
-        studentAnswer.setQuestion(question.get());
-        studentAnswer.setSelectedAnswer(answer.get());
-        studentAnswer.setParticipation(participation.get());
-
-        return ResponseEntity.ok(service.save(studentAnswer));
+        return service.submitAnswer(request);
     }
 
     @GetMapping("/stats/{participationId}")
     public ResponseEntity<?> getStats(@PathVariable Long participationId) {
-        return participationRepo.findById(participationId)
-                .map(participation -> {
-                    int correct = service.countCorrectAnswers(participation);
-                    int total = participation.getTest().getQuestions().size();
-                    int answered = service.getByParticipation(participation).size();
-                    int wrong = answered - correct;
-                    int blank = total - answered;
+        return service.getStatistics(participationId);
+    }
 
-                    Map<String, Integer> stats = new HashMap<>();
-                    stats.put("Toplam", total);
-                    stats.put("Doğru", correct);
-                    stats.put("Yanlış", wrong);
-                    stats.put("Boş", blank);
-                    return ResponseEntity.ok(stats);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping
+    public ResponseEntity<?> updateAnswer(@RequestBody AnswerSubmissionDto request) {
+        return service.updateAnswer(request);
     }
 }
+
